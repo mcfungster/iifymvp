@@ -1,0 +1,33 @@
+<!doctype html>
+<html ng-app="iifyMVP">
+  <head>
+    <script   src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js">
+    </script>
+    <script src="app/app.js"></script>
+  </head>
+  <body>
+    <h1>IIFYMVP</h1>
+    <div ng-controller="CalorieController as calories">
+      <form ng-submit="calories.macroSplit()">Total Calorie Allotment:
+        <input
+          type="number"
+          ng-model="totalCals"
+          size="5"
+          placeholder="target calorie intake"
+        />
+        <input type="submit" value="next"/>
+      </form>
+
+
+      <hr />
+      <hr />
+      <pre>{{ totalCals }}</pre>
+      <hr />
+      <hr />
+
+    </div>
+
+
+
+  </body>
+</html>

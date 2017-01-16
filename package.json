@@ -1,0 +1,29 @@
+{
+  "name": "iifymvp",
+  "version": "1.0.0",
+  "description": "basic webapp to track your macros for the day",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcfungster/iifymvp.git"
+  },
+  "keywords": [
+    "iifym",
+    "macros",
+    "lifting",
+    "nutrition"
+  ],
+  "author": "Kevin Fung",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mcfungster/iifymvp/issues"
+  },
+  "homepage": "https://github.com/mcfungster/iifymvp#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "request": "^2.79.0"
+  }
+}
