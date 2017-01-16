@@ -8,11 +8,12 @@
   <body>
     <h1>IIFYMVP</h1>
 
+
     <div ng-controller="CalorieController as calories">
       <form
         name="totalCalInput"
         ng-submit="totalCalInput.$valid && calories.macroSplit()"
-        >Total Calorie Allotment:
+      >Total Calorie Allotment:
         <input
           ng-required="true" type="number" maxlength="20"
           ng-model="totalCals" placeholder="target"
@@ -27,7 +28,50 @@
       <pre>totalCals = {{ totalCals }}</pre>
     </div>
 
+    <h1>MACROS GO HERE</h1>
     <div ng-controller="MacroController as macros">
+      <form name="macroForm" ng-submit="macros.macroCalc()">
+        <table>
+            <tr>
+              <td>Protein</td>
+              <td><input ng-model="macroProtein" type="number" placeholder=" %" min="0" max="100"/></td>
+              <td>Goal: </td>
+              <td>{{ macroProtein }}</td>
+              <td>{{ gramProtein }} grams</td>
+            </tr>
+            <tr>
+              <td>Fats</td>
+              <td><input ng-model="macroFat" type="number" placeholder=" %" min="0" max="100"/></td>
+              <td>Goal: </td>
+              <td>{{ macroFat }}</td>
+              <td>{{ gramFat }} grams</td>
+            </tr>
+            <tr>
+              <td>Carbs</td>
+              <td><input ng-model="macroCarb" type="number" placeholder=" %" min="0" max="100"/></td>
+              <td>Goal: </td>
+              <td>{{ macroCarb }}</td>
+              <td>{{ gramCarb }} grams</td>
+            </tr>
+        </table>
+        <input type="submit" value="next"/>
+      </form>
+      <pre>{{ test }}</pre>
+
+    </div>
+
+    <div ng-controller="SearchController as search">
+      <h1>WHAT ARE YOU EATING?</h1>
+      <form name="search">
+        <input ng-required="true" type="text" placeholder=" give me food" />
+        <input type="submit" value="search"/>
+      </form>
+    </div>
+
+
+
+
+
 
 
 
