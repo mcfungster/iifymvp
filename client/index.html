@@ -7,27 +7,30 @@
   </head>
   <body>
     <h1>IIFYMVP</h1>
+
     <div ng-controller="CalorieController as calories">
-      <form ng-submit="calories.macroSplit()">Total Calorie Allotment:
+      <form
+        name="totalCalInput"
+        ng-submit="totalCalInput.$valid && calories.macroSplit()"
+        >Total Calorie Allotment:
         <input
-          type="number"
-          ng-model="totalCals"
-          size="5"
-          placeholder="target calorie intake"
+          ng-required="true" type="number" maxlength="20"
+          ng-model="totalCals" placeholder="target"
+          min="1200" max="99999"
         />
-        <input type="submit" value="next"/>
+        <input
+          type="submit"
+          value="next"
+          ng-disabled="totalCalInput.$invalid"
+        />
       </form>
-
-
-      <hr />
-      <hr />
-      <pre>{{ totalCals }}</pre>
-      <hr />
-      <hr />
-
+      <pre>totalCals = {{ totalCals }}</pre>
     </div>
 
+    <div ng-controller="MacroController as macros">
 
 
+
+    <div ng-view></div>
   </body>
 </html>
