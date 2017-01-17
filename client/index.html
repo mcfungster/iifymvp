@@ -24,7 +24,6 @@
           ng-disabled="totalCalInput.$invalid"
         />
       </form>
-      <pre>totalCals = {{ totalCals }}</pre>
     </div>
 
     <h1>MACROS GO HERE</h1>
@@ -49,31 +48,25 @@
         </table>
         <input type="submit" value="Calculate!"/>
       </form>
-
     </div>
 
     <h1>WHAT ARE YOU EATING?</h1>
     <div ng-controller="SearchController as search">
-      <h2>Remaining:</h2>
+      <h2>Remaining Calories: {{ remainingCals }}</h2>
       <form name="searchForm" ng-submit="search.getFoods()">
         <input ng-required="true" type="text" placeholder=" give me food" ng-model="query" />
         <input type="submit" value="search" />
       </form>
-        <div ng-repeat="searchItem in searchResults">
+      <ul>
+        <li ng-repeat="searchItem in searchResults">
           {{ searchItem.name }}
           <div ng-controller="FoodController as food">
-            <div><input type="button" value="DO WANT" ng-show="shown"/></div>
-            <div><input type="button" value="ARE YOU SURE???" ng-show="shown2"/></div>
+            <div>{{ searchItem.ndbno }}<input type="button" value="DO WANT" ng-show="shown && !error" ng-click="food.moreInfo(searchItem.ndbno)" /></div>
+            <div>{{ MACROS }}<input type="button" value="ARE YOU SURE???" ng-show="!shown && !error"/></div>
           </div>
-        </div>
+        </li>
+      </ul>
     </div>
-
-
-
-
-
-
-
 
     <div ng-view></div>
   </body>

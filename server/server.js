@@ -17,12 +17,13 @@ app.use(bodyParser.json());
 // });
 
 app.post('/search', function(req, res) {
-  console.log('in /search route', req.body.data);
+  // console.log('in /search route', req.body.data);
   var options = {
     url: 'http://api.nal.usda.gov/ndb/search',
     qs: {
       api_key: '2NvUKo0fX0jlycZTtGjJ4kuSJdPk8RmWMgZmxbb5', //REMOVE ME LATER
-      q: req.body.data
+      q: req.body.data,
+      max: 10,
     },
     headers: {
       'content-type': 'application/json'
@@ -36,7 +37,8 @@ app.post('/search', function(req, res) {
     }
     var results = JSON.parse(body);
     console.log(results);
-    results = (results.errors)? [{name: "No results found for" + req.body.data}]
+    results = (results.errors)?
+      [{'name': "No results found for" + req.body.data, 'error': true}]
       : results.list.item;
 
     res.send(results);
@@ -44,11 +46,12 @@ app.post('/search', function(req, res) {
 });
 
 app.post('/food', function(req, res) {
+  console.log('in /food route', req.body.data);
   var options = {
     url: 'http://api.nal.usda.gov/ndb/reports',
     qs: {
       api_key: '2NvUKo0fX0jlycZTtGjJ4kuSJdPk8RmWMgZmxbb5', //REMOVE ME LATER
-      ndbno: '21237' //REMOVE ME LATER - BIG MACS
+      ndbno: req.body.data //REMOVE ME LATER - BIG MACS
     },
     headers: {
       'content-type': 'application/json'
@@ -58,7 +61,9 @@ app.post('/food', function(req, res) {
   request.get(options, function(err, response, body) {
     if (err) console.error(err);
     var results = JSON.parse(body).report;
-    res.send(results);
+    // console.log(Object.keys(results));
+    // console.log(Object.keys(results.food));
+    res.send(results.food);
   });
 });
 
