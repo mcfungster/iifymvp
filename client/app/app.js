@@ -2,65 +2,31 @@ var DEBUG = true;
 if (DEBUG) console.log("app.js loaded");
 
 angular.module('iifyMVP', [])
-.factory('macroTracker', function() {
+.factory('macroTracker', () => {
   var userCals = 0;
-  var calsRemaining = 0;
   var macros = {
     protein: 0,
     fat: 0,
     carb: 0
   };
 
-  var setProtein = function(percent) {
-    macros.protein = ~~(percent / 400 * userCals);
-  }
-  var setFat = function(percent) {
-    macros.fat = ~~(percent / 900 * userCals);
-  }
-  var setCarb = function(percent) {
-    macros.carb = ~~(percent / 400 * userCals);
-  }
-
-  var getMacros = function() {
-    return macros;
-  }
   var setCals = function(cals) {
     userCals = cals;
     calsRemaining = cals;
     return userCals;
   }
 
-  var getCals = function() {
-    return userCals;
-  }
-  var getCalsRemaining = function() {
-    return calsRemaining;
-  }
-
-  var eatStuff = function(cals) {
-    calsRemaining = calsRemaining - cals;
-    return calsRemaining;
-  }
-
   return {
-    setCals: setCals,
-    getCals: getCals,
-    getCalsRemaining: getCalsRemaining,
-    setProtein: setProtein,
-    setFat: setFat,
-    setCarb: setCarb,
-    getMacros: getMacros,
-    eatStuff: eatStuff
+    userCals: userCals,
+    macros: macros,
   }
 })
-.controller('CalorieController', function($scope, macroTracker) {
+.controller('CalorieController', function($scope, $rootScope, macroTracker) {
   var calories = this;
 
-  // if (DEBUG) console.log("app.js: CalorieController loaded");
-  if (DEBUG) console.log("CalorieController $scope: ", $scope);
-  calories.macroSplit = function() {
-    macroTracker.setCals($scope.totalCals);
-    if (DEBUG) console.log(macroTracker.getCals(), 'calories submitted');
+  calories.setCalories = function() {
+    macroTracker.userCals = $scope.totalCals;
+    $rootScope.globalRemain =  $scope.totalCals;
   };
 })
 .controller('MacroController', function($scope, macroTracker) {
@@ -69,21 +35,27 @@ angular.module('iifyMVP', [])
   $scope.gramFat = "";
   $scope.gramCarb = "";
 
-  macros.macroCalc = function() {
+  macros.macroCalc = () => {
     var warning = "submit a calorie target!"
     if (DEBUG) console.log("macro percents submitted!");
-    macroTracker.setProtein($scope.macroProtein);
-    macroTracker.setFat($scope.macroFat);
-    macroTracker.setCarb($scope.macroCarb);
+
+    macroTracker.macros.protein =
+      ~~($scope.macroProtein / 400 * macroTracker.userCals);
+
+    macroTracker.macros.fat =
+      ~~($scope.macroFat / 900 * macroTracker.userCals);
+
+    macroTracker.macros.carb =
+      ~~($scope.macroCarb / 400 * macroTracker.userCals);
+    if (DEBUG) console.log("macros: ", macroTracker.macros);
 
     $scope.gramProtein =
-      "Goal: " + macroTracker.getMacros().protein + " grams" || warning;
+      "Goal: " + macroTracker.macros.protein + " grams" || warning;
     $scope.gramFat =
-      "Goal: " + macroTracker.getMacros().fat + " grams" || warning;
+      "Goal: " + macroTracker.macros.fat + " grams" || warning;
     $scope.gramCarb =
-      "Goal: " + macroTracker.getMacros().carb + " grams" || warning;
+      "Goal: " + macroTracker.macros.carb + " grams" || warning;
 
-    if (DEBUG) console.log("macros: ", macroTracker.getMacros());
   }
   if (DEBUG) console.log("MacroController $scope: ", $scope);
 })
@@ -91,22 +63,20 @@ angular.module('iifyMVP', [])
   if (DEBUG) console.log('SearchController scope: ', $scope);
   var search = this;
 
-  $scope.gramProtein = macroTracker.getMacros().protein;
-  $scope.gramFat = macroTracker.getMacros().fat;
-  $scope.gramCarb = macroTracker.getMacros().carb;
+  $scope.gramProtein = macroTracker.macros.protein;
+  $scope.gramFat = macroTracker.macros.fat;
+  $scope.gramCarb = macroTracker.macros.carb;
 
   search.getFoods = function(query) {
     console.log("SEARCHING", $scope.query);
     $http.post('/search', {data: $scope.query})
       .then(function(response) {
-        // console.log("raw response data", response);
-        $scope.remainingCals = macroTracker.getCalsRemaining();
         $scope.searchResults = response.data;
-        console.log('\n\ndata:', response.data);
+        $scope.error = response.data[0].error;
       });
   }
 })
-.controller('FoodController', function($scope, $http, macroTracker) {
+.controller('FoodController', function($scope, $http, $rootScope, macroTracker) {
   // console.log('FoodController scope: ', $scope);
   var food = this;
 
@@ -128,59 +98,55 @@ angular.module('iifyMVP', [])
   };
 
   food.eatTheFoods = function() {
-    console.log("OM NOM NOM NOM");
-    console.log($scope.$parent.remainingCals);
-    console.log($scope.foodNetCals);
-    $scope.$parent.remainingCals -= $scope.foodNetCals;
+    $rootScope.globalRemain -= $scope.foodNetCals;
   };
 });
 
 var macroParser = function(nutrients) {
+  var macros = macroGenerator(nutrients);
   var string = '';
-  nutrients.forEach( (nutrient) => {
-    // console.log(nutrient);
-    // console.log(typeof nutrient.nutrient_id, nutrient.nutrient_id);
-    if (nutrient.nutrient_id === '203') { //protein
-      string += 'Protein: ' + nutrient.value + 'g  ';
-    }
-    if (nutrient.nutrient_id === '204') { //fat
-      string += 'Fat: ' + nutrient.value + 'g  ';
-    }
-    if (nutrient.nutrient_id === '205') { // carb
-      string += 'Carbs: ' + nutrient.value + 'g  ';
-    }
-  });
+  string += 'Protein: ' + macros.protein + 'g\t';
+  string += 'Fat: ' + macros.fat + 'g\t';
+  string += 'Carbs: ' + macros.carb + 'g\t';
+  string += 'Total Calories: ' + calCalc(nutrients);
+
   return string;
 }
+
 var calCalc = function(nutrients) {
-  var netCals = 0;
-  nutrients.forEach( (nutrient) => {
-    if (nutrient.nutrient_id === '203') { //protein
-      netCals += parseInt(nutrient.value) * 4;
-    }
-    if (nutrient.nutrient_id === '204') { //fat
-      netCals += parseInt(nutrient.value) * 9;
-    }
-    if (nutrient.nutrient_id === '205') { // carb
-      netCals += parseInt(nutrient.value) * 4;
-    }
-  });
-  console.log("calculated caloric value: ", netCals);
-  return netCals;
+  var macros = macroGenerator(nutrients);
+  return macros.protein * 4 + macros.fat * 9 + macros.carb * 4;
 }
 
+var macroGenerator = function(nutrients) {
+  var macros = {
+    protein: 0,
+    fat: 0,
+    carb: 0
+  };
 
+  nutrients.forEach( (nutrient) => {
+    if (nutrient.nutrient_id === '203') { //protein
+      macros.protein = trueValue(nutrient);
+    }
+    if (nutrient.nutrient_id === '204') { //fat
+      macros.fat = trueValue(nutrient);
+    }
+    if (nutrient.nutrient_id === '205') { // carb
+      macros.carb = trueValue(nutrient);
+    }
+  });
 
+  console.log("generated macro: ", macros);
+  return macros;
+}
 
+var trueValue = function(nutrient) {
+  var val1 = parseInt(nutrient.measures[0].value);
+  var val2 = parseInt(nutrient.value);
 
-
-
-
-
-
-
-
-
+  return (val1 > val2)? val1 : val2;
+}
 
 
 

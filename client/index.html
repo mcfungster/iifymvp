@@ -4,71 +4,74 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js">
     </script>
     <script src="app/app.js"></script>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    <div class="container">
 
-    <h1>IIFYMVP</h1>
-    <div ng-controller="CalorieController as calories">
-      <form
-        name="totalCalInput"
-        ng-submit="totalCalInput.$valid && calories.macroSplit()"
-      >Total Calorie Allotment:
-        <input
-          ng-required="true" type="number" maxlength="20"
-          ng-model="totalCals" placeholder="target"
-          min="1200" max="99999"
-        />
-        <input
-          type="submit"
-          value="next"
-          ng-disabled="totalCalInput.$invalid"
-        />
-      </form>
+      <h1>IIFYMVP</h1>
+      <div class="main-module" ng-controller="CalorieController as calories">
+        <form
+          name="totalCalInput"
+          ng-submit="totalCalInput.$valid && calories.setCalories()"
+        >Total Calorie Allotment:
+          <input
+            ng-required="true" type="number" maxlength="20"
+            ng-model="totalCals" placeholder="target"
+            min="1200" max="99999"
+          />
+          <input
+            type="submit"
+            value="next"
+            ng-disabled="totalCalInput.$invalid"
+          />
+        </form>
+      </div>
+
+      <h1>MACRO TARGETS</h1>
+      <div ng-controller="MacroController as macros">
+        <form name="macroForm" ng-submit="macros.macroCalc()">
+          <table>
+              <tr>
+                <td>Protein</td>
+                <td><input ng-model="macroProtein" type="number" placeholder=" %" min="0" max="100"/></td>
+                <td>{{ gramProtein }}</td>
+              </tr>
+              <tr>
+                <td>Fats</td>
+                <td><input ng-model="macroFat" type="number" placeholder=" %" min="0" max="100"/></td>
+                <td>{{ gramFat }}</td>
+              </tr>
+              <tr>
+                <td>Carbs</td>
+                <td><input ng-model="macroCarb" type="number" placeholder=" %" min="0" max="100"/></td>
+                <td>{{ gramCarb }}</td>
+              </tr>
+          </table>
+          <input type="submit" value="Calculate!"/>
+        </form>
+      </div>
+
+      <h1>WHAT ARE YOU EATING?</h1>
+      <div ng-controller="SearchController as search">
+        <h2>Remaining Calories: {{ globalRemain }}</h2>
+        <form name="searchForm" ng-submit="search.getFoods()">
+          <input ng-required="true" type="text" placeholder=" give me food" ng-model="query" />
+          <input type="submit" value="search" />
+        </form>
+        <ul>
+          <li ng-repeat="searchItem in searchResults">
+            {{ searchItem.name }}
+            <div ng-controller="FoodController as food">
+              <div ng-show="shown && !error"><input type="button" value="DO WANT" ng-click="food.moreInfo(searchItem.ndbno)" /></div>
+              <div ng-show="!shown && !error">{{ foodInfo }}</div>
+              <div ng-show="!shown && !error"><input type="button" value="ARE YOU SURE???" ng-click="food.eatTheFoods()"/></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div ng-view></div>
     </div>
-
-    <h1>MACROS GO HERE</h1>
-    <div ng-controller="MacroController as macros">
-      <form name="macroForm" ng-submit="macros.macroCalc()">
-        <table>
-            <tr>
-              <td>Protein</td>
-              <td><input ng-model="macroProtein" type="number" placeholder=" %" min="0" max="100"/></td>
-              <td>{{ gramProtein }}</td>
-            </tr>
-            <tr>
-              <td>Fats</td>
-              <td><input ng-model="macroFat" type="number" placeholder=" %" min="0" max="100"/></td>
-              <td>{{ gramFat }}</td>
-            </tr>
-            <tr>
-              <td>Carbs</td>
-              <td><input ng-model="macroCarb" type="number" placeholder=" %" min="0" max="100"/></td>
-              <td>{{ gramCarb }}</td>
-            </tr>
-        </table>
-        <input type="submit" value="Calculate!"/>
-      </form>
-    </div>
-
-    <h1>WHAT ARE YOU EATING?</h1>
-    <div ng-controller="SearchController as search">
-      <h2>Remaining Calories: {{ remainingCals }}</h2>
-      <form name="searchForm" ng-submit="search.getFoods()">
-        <input ng-required="true" type="text" placeholder=" give me food" ng-model="query" />
-        <input type="submit" value="search" />
-      </form>
-      <ul>
-        <li ng-repeat="searchItem in searchResults">
-          {{ searchItem.name }}
-          <div ng-controller="FoodController as food">
-            <div ng-show="shown && !error"><input type="button" value="DO WANT" ng-click="food.moreInfo(searchItem.ndbno)" /></div>
-            <div ng-show="!shown && !error">{{ foodInfo }}</div>
-            <div ng-show="!shown && !error"><input type="button" value="ARE YOU SURE???" ng-click="food.eatTheFoods()"/></div>
-          </div>
-        </li>
-      </ul>
-    </div>
-
-    <div ng-view></div>
   </body>
 </html>

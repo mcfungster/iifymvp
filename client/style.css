@@ -1,0 +1,29 @@
+
+* {
+  /*border: 1px solid red;*/
+}
+
+body {
+  margin-left: 20px;
+  font-size: 15px;
+  font-family: sans-serif;
+  width: 80%;
+}
+
+h1 {
+  font-size: 2em;
+  font-family: sans-serif;;
+}
+h2 {
+  font-size: 1.5em;
+  font-family: sans-serif;;
+}
+
+li {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+input {
+  /*background-color: white;*/
+}

@@ -41,6 +41,7 @@ app.post('/search', function(req, res) {
       [{'name': "No results found for" + req.body.data, 'error': true}]
       : results.list.item;
 
+    console.log('results: ', results);
     res.send(results);
   });
 });
