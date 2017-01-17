@@ -1,7 +1,7 @@
-
 var DEBUG = true;
 if (DEBUG) console.log("app.js loaded");
-// if (DEBUG) console.log("");
+
+
 
 angular.module('iifyMVP', [])
   .factory('macroTracker', function() {
@@ -11,15 +11,20 @@ angular.module('iifyMVP', [])
       fat: 0,
       carb: 0
     }
+    // var grams = {
+    //   protein: 0,
+    //   fat: 0,
+    //   carb: 0
+    // }
 
     var setProtein = function(percent) {
-      macros.protein = percent;
+      macros.protein = ~~(percent / 100 * userCals);
     }
     var setFat = function(percent) {
-      macros.fat = percent;
+      macros.fat = ~~(percent / 100 * userCals);
     }
     var setCarb = function(percent) {
-      macros.carb = percent;
+      macros.carb = ~~(percent / 100 * userCals);
     }
 
     var getMacros = function() {
@@ -54,21 +59,54 @@ angular.module('iifyMVP', [])
   })
   .controller('MacroController', function($scope, macroTracker) {
     var macros = this;
+    $scope.gramProtein = "";
+    $scope.gramFat = "";
+    $scope.gramCarb = "";
 
     macros.macroCalc = function() {
-      console.log("macro percents submitted!");
+      var warning = "submit a calorie target!"
+      if (DEBUG) console.log("macro percents submitted!");
       macroTracker.setProtein($scope.macroProtein);
       macroTracker.setFat($scope.macroFat);
       macroTracker.setCarb($scope.macroCarb);
-      console.log("macros: ", macroTracker.getMacros());
+
+      $scope.gramProtein =
+        "Goal: " + macroTracker.getMacros().protein + " grams" || warning;
+      $scope.gramFat =
+        "Goal: " + macroTracker.getMacros().fat + " grams" || warning;
+      $scope.gramCarb =
+        "Goal: " + macroTracker.getMacros().carb + " grams" || warning;
+
+      if (DEBUG) console.log("macros: ", macroTracker.getMacros());
     }
     if (DEBUG) console.log("MacroController $scope: ", $scope);
-    if (DEBUG) console.log("MacroController: macros.macroCalc: ", macros.macroCalc);
   })
-  .controller('SearchController', function() {
+  .controller('SearchController', function($scope, $http, macroTracker) {
+    var search = this;
 
+    $scope.gramProtein = macroTracker.getMacros().protein;
+    $scope.gramFat = macroTracker.getMacros().fat;
+    $scope.gramCarb = macroTracker.getMacros().carb;
 
+    search.getFoods = function(query) {
+      console.log("SEARCHING", $scope.query);
+      $http.post('/search', {data: $scope.query})
+      .then(function(response) {
+        $scope.searchResults = response.data;
+        console.log('\n\ndata:', response.data);
+      });
+    }
+  })
+  .controller('FoodController', function($scope) {
+    var food = this;
+
+    food.getFoodMacros = function() {
+      $http.post('/food', {data: 'dbno'})
+      .then(function(response) {
+      });
+    }
   });
+
 
 
 

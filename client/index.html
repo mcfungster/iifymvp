@@ -1,14 +1,13 @@
 <!doctype html>
 <html ng-app="iifyMVP">
   <head>
-    <script   src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js">
     </script>
     <script src="app/app.js"></script>
   </head>
   <body>
+
     <h1>IIFYMVP</h1>
-
-
     <div ng-controller="CalorieController as calories">
       <form
         name="totalCalInput"
@@ -35,37 +34,38 @@
             <tr>
               <td>Protein</td>
               <td><input ng-model="macroProtein" type="number" placeholder=" %" min="0" max="100"/></td>
-              <td>Goal: </td>
-              <td>{{ macroProtein }}</td>
-              <td>{{ gramProtein }} grams</td>
+              <td>{{ gramProtein }}</td>
             </tr>
             <tr>
               <td>Fats</td>
               <td><input ng-model="macroFat" type="number" placeholder=" %" min="0" max="100"/></td>
-              <td>Goal: </td>
-              <td>{{ macroFat }}</td>
-              <td>{{ gramFat }} grams</td>
+              <td>{{ gramFat }}</td>
             </tr>
             <tr>
               <td>Carbs</td>
               <td><input ng-model="macroCarb" type="number" placeholder=" %" min="0" max="100"/></td>
-              <td>Goal: </td>
-              <td>{{ macroCarb }}</td>
-              <td>{{ gramCarb }} grams</td>
+              <td>{{ gramCarb }}</td>
             </tr>
         </table>
-        <input type="submit" value="next"/>
+        <input type="submit" value="Calculate!"/>
       </form>
-      <pre>{{ test }}</pre>
 
     </div>
 
+    <h1>WHAT ARE YOU EATING?</h1>
     <div ng-controller="SearchController as search">
-      <h1>WHAT ARE YOU EATING?</h1>
-      <form name="search">
-        <input ng-required="true" type="text" placeholder=" give me food" />
-        <input type="submit" value="search"/>
+      <h2>Remaining:</h2>
+      <form name="searchForm" ng-submit="search.getFoods()">
+        <input ng-required="true" type="text" placeholder=" give me food" ng-model="query" />
+        <input type="submit" value="search" />
       </form>
+        <div ng-repeat="searchItem in searchResults">
+          {{ searchItem.name }}
+          <div ng-controller="FoodController as food">
+            <div><input type="button" value="DO WANT" ng-show="shown"/></div>
+            <div><input type="button" value="ARE YOU SURE???" ng-show="shown2"/></div>
+          </div>
+        </div>
     </div>
 
 
