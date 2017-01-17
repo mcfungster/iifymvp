@@ -1,17 +1,20 @@
 <!doctype html>
 <html ng-app="iifyMVP">
+  <title>IF IT FITS YOUR MVP</title>
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js">
     </script>
     <script src="app/app.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png">
   </head>
   <body>
     <div class="container">
 
-      <h1>IIFYMVP</h1>
+      <h1>IIFYM(VP)</h1>
       <div class="main-module" ng-controller="CalorieController as calories">
         <form
+          class="calorie_input"
           name="totalCalInput"
           ng-submit="totalCalInput.$valid && calories.setCalories()"
         >Total Calorie Allotment:
@@ -54,12 +57,12 @@
 
       <h1>WHAT ARE YOU EATING?</h1>
       <div ng-controller="SearchController as search">
-        <h2>Remaining Calories: {{ globalRemain }}</h2>
+        <div class="budget">Remaining Calorie Budget: {{ globalRemain }}</div>
         <form name="searchForm" ng-submit="search.getFoods()">
           <input ng-required="true" type="text" placeholder=" give me food" ng-model="query" />
           <input type="submit" value="search" />
         </form>
-        <ul>
+        <ol>
           <li ng-repeat="searchItem in searchResults">
             {{ searchItem.name }}
             <div ng-controller="FoodController as food">
@@ -68,7 +71,7 @@
               <div ng-show="!shown && !error"><input type="button" value="ARE YOU SURE???" ng-click="food.eatTheFoods()"/></div>
             </div>
           </li>
-        </ul>
+        </ol>
       </div>
 
       <div ng-view></div>
