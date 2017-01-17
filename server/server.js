@@ -36,7 +36,7 @@ app.post('/search', function(req, res) {
       res.sendStatus(404)
     }
     var results = JSON.parse(body);
-    console.log(results);
+    // console.log(results);
     results = (results.errors)?
       [{'name': "No results found for" + req.body.data, 'error': true}]
       : results.list.item;
@@ -63,6 +63,8 @@ app.post('/food', function(req, res) {
     var results = JSON.parse(body).report;
     // console.log(Object.keys(results));
     // console.log(Object.keys(results.food));
+    console.log(results);
+    console.log(results.food.nutrients);
     res.send(results.food);
   });
 });
