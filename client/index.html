@@ -63,7 +63,7 @@
           <div ng-controller="FoodController as food">
             <div ng-show="shown && !error"><input type="button" value="DO WANT" ng-click="food.moreInfo(searchItem.ndbno)" /></div>
             <div ng-show="!shown && !error">{{ foodInfo }}</div>
-            <div ng-show="!shown && !error"><input type="button" value="ARE YOU SURE???"/></div>
+            <div ng-show="!shown && !error"><input type="button" value="ARE YOU SURE???" ng-click="food.eatTheFoods()"/></div>
           </div>
         </li>
       </ul>

@@ -37,6 +37,11 @@ angular.module('iifyMVP', [])
     return calsRemaining;
   }
 
+  var eatStuff = function(cals) {
+    calsRemaining = calsRemaining - cals;
+    return calsRemaining;
+  }
+
   return {
     setCals: setCals,
     getCals: getCals,
@@ -44,7 +49,8 @@ angular.module('iifyMVP', [])
     setProtein: setProtein,
     setFat: setFat,
     setCarb: setCarb,
-    getMacros: getMacros
+    getMacros: getMacros,
+    eatStuff: eatStuff
   }
 })
 .controller('CalorieController', function($scope, macroTracker) {
@@ -100,12 +106,13 @@ angular.module('iifyMVP', [])
       });
   }
 })
-.controller('FoodController', function($scope, $http) {
+.controller('FoodController', function($scope, $http, macroTracker) {
   // console.log('FoodController scope: ', $scope);
   var food = this;
 
   $scope.shown = true;
-  $scope.foodInfo = {};
+  $scope.foodInfo = '';
+  $scope.foodNetCals = 0;
   // $scope.error = $parentScope.error;
 
   food.moreInfo = function(ndbno) {
@@ -116,10 +123,15 @@ angular.module('iifyMVP', [])
     .then(function(response) {
       // console.log('.nutrients: ', response.data.nutrients);
       $scope.foodInfo = macroParser(response.data.nutrients);
+      $scope.foodNetCals = calCalc(response.data.nutrients);
     });
   };
 
-  food.getFoodMacros = function() {
+  food.eatTheFoods = function() {
+    console.log("OM NOM NOM NOM");
+    console.log($scope.$parent.remainingCals);
+    console.log($scope.foodNetCals);
+    $scope.$parent.remainingCals -= $scope.foodNetCals;
   };
 });
 
@@ -128,19 +140,34 @@ var macroParser = function(nutrients) {
   nutrients.forEach( (nutrient) => {
     // console.log(nutrient);
     // console.log(typeof nutrient.nutrient_id, nutrient.nutrient_id);
-    if (nutrient.nutrient_id === '203') {
+    if (nutrient.nutrient_id === '203') { //protein
       string += 'Protein: ' + nutrient.value + 'g  ';
     }
-    if (nutrient.nutrient_id === '204') {
+    if (nutrient.nutrient_id === '204') { //fat
       string += 'Fat: ' + nutrient.value + 'g  ';
     }
-    if (nutrient.nutrient_id === '205') {
+    if (nutrient.nutrient_id === '205') { // carb
       string += 'Carbs: ' + nutrient.value + 'g  ';
     }
   });
   return string;
 }
-
+var calCalc = function(nutrients) {
+  var netCals = 0;
+  nutrients.forEach( (nutrient) => {
+    if (nutrient.nutrient_id === '203') { //protein
+      netCals += parseInt(nutrient.value) * 4;
+    }
+    if (nutrient.nutrient_id === '204') { //fat
+      netCals += parseInt(nutrient.value) * 9;
+    }
+    if (nutrient.nutrient_id === '205') { // carb
+      netCals += parseInt(nutrient.value) * 4;
+    }
+  });
+  console.log("calculated caloric value: ", netCals);
+  return netCals;
+}
 
 
 
