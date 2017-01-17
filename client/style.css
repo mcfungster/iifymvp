@@ -7,18 +7,26 @@ body {
   margin-left: 20px;
   font-size: 15px;
   font-family: sans-serif;
-  width: 80%;
+  width: 50%;
+}
+
+.container {
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 10px;
 }
 
 h1 {
-  font-size: 2em;
+  font-size: 2.2em;
   font-family: sans-serif;
-  margin-top: 1em;
+  margin-top: 0em;
   margin-bottom: .25em;
 }
 h2 {
-  font-size: 1.5em;
+  font-size: 1.9em;
   font-family: sans-serif;;
+  margin-top: 1em;
+  margin-bottom: .25em;
 }
 
 li {
